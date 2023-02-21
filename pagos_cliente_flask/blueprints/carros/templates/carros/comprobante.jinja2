@@ -1,0 +1,89 @@
+{% extends "layouts/app.jinja2" %}
+
+{% block title %}Comprobante de pago{% endblock %}
+
+{% block content %}
+    <div class="row m-5 justify-content-md-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header">
+                    <h3>Comprobante de pago</h3>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Nombre</label>
+                            <input type="text" readonly value="{{ nombre }}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Correo Electrónico</label>
+                            <input type="text" readonly value="{{ email }}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Folio</label>
+                            <input type="text" readonly value="{{ folio }}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Trámite o servicio</label>
+                            <textarea type="text" readonly class="form-control" rows="4">{{ descripcion }}</textarea>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Total</label>
+                            <input type="text" readonly value="$ {{'%0.2f'|format(total|float)}}" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Fecha y hora del pago</label>
+                            <input id="resultadoTiempoInput" type="text" readonly value="" class="form-control">
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label>Código QR para validar</label>
+                            <img src="https://chart.googleapis.com/chart?chs=250x250&cht=qr&chl={{ comprobante_url }}" alt="[ERROR_EN_QR]"><br>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block custom_javascript %}
+    <!-- jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha512-STof4xm1wgkfm7heWqFJVn58Hm3EtS31XFaagaa8VMReCXAkQnJZ+jEy8PCC/iT18dFy95WcExNHFTqLyp72eQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Moment.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/locale/es-mx.min.js" integrity="sha512-Qy4cmZ6v7vnVEc0cn/BIj9q15eB98do4hMvu8xtc/H+v+YYpdpDrB35flHS3NPLbZUpe1npSYY/u+Gi3UB61vw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <!-- Resultado tiempo puede venir en UTC o estar vacio -->
+    <script>
+        // Funcion para dar formato a resultado_tiempo
+        var resultado_tiempo = "{{ resultado_tiempo }}";
+        function resultadoTiempo() {
+            if (resultado_tiempo) {
+                var tiempo = moment(resultado_tiempo).utc().format('DD/MM/YYYY hh:mm:ss');
+                $('#resultadoTiempoInput').val(tiempo);
+            }
+        }
+        // Cuando se carga la página
+        $(document).ready(function() {
+            moment.locale('es-mx');
+            resultadoTiempo();
+        });
+    </script>
+{% endblock %}

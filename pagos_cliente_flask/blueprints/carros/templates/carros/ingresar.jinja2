@@ -12,8 +12,43 @@
                 </div>
                 <div class="card-body">
                     <div class="col-md-12 tramite p-2 rounded">
-                        <h4>{{ descripcion }}</h4>
-                        <p>Costo: <strong>$ {{ costo }}</strong></p>    
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h4 class="text-center">{{ descripcion }}</h4>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                Cantidad:
+                            </div>
+                            <div class="col-md-8">
+                                <strong>{{ cantidad }}</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                Total a pagar:
+                            </div>
+                            <div class="col-md-8">
+                                $ {{ '%0.2f'|format(costo|float) }}
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                Juzgado u oficina:
+                            </div>
+                            <div class="col-md-8">
+                                <strong>{{ autoridad_descripcion }}</strong>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                Distrito:
+                            </div>
+                            <div class="col-md-8">
+                                <strong>{{ distrito_nombre }}</strong>
+                            </div>
+                        </div>
                     </div>
                     <br>
                     <h5>Registre sus datos para realizar el pago</h5>
@@ -47,20 +82,18 @@
                                 {% call f.form_group(form.recaptcha) %}{% endcall %}
                             </div>
                         </div>
-                        
                         {% call f.form_group(form.aceptar) %}{% endcall %}
                         <div class="row">
                             <div class="col-md-12 text-center">
                                 {% call f.form_group(form.continuar) %}{% endcall %}
                             </div>
                         </div>
-                        
                     {% endcall %}
                 </div>
-            </div>    
+            </div>
         </div>
-    </div> 
-    {% endblock %}
+    </div>
+{% endblock %}
 
 {% block custom_javascript %}
     <!-- reCaptcha Integration -->
