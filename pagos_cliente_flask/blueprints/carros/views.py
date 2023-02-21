@@ -60,12 +60,16 @@ def ingresar():
                 abort(400, datos["message"])
             abort(400, "No se pudo crear el carro para pagar.")
 
-        # Validar que haya recibido el id del pago
-        if not "pag_pago_id" in datos:
-            abort(400, "No se pudo obtener el id del pago.")
+        # Validar que haya recibido el id del pago hasheado
+        if not "id_hasheado" in datos:
+            abort(400, "No se pudo obtener el id del pago hasheado.")
+
+        # Validar que haya recibido el url
+        if not "url" in datos:
+            abort(400, "No se pudo obtener el URL.")
 
         # Redireccionar a la página de revisión
-        return redirect(url_for("carros.revisar", pag_pago_id_hasheado=cifrar_id(int(datos["pag_pago_id"])), banco_url=datos["url"]))
+        return redirect(url_for("carros.revisar", pag_pago_id_hasheado=datos["id_hasheado"], banco_url=datos["url"]))
 
     # Tomar por GET la cantidad
     cantidad = safe_integer(request.args.get("cantidad"), default=1)
@@ -208,6 +212,10 @@ def revisar(pag_pago_id_hasheado):
         abort(400, "No se recibió el email.")
 
     # Validar que se haya recibido el total
+    if not "cantidad" in datos:
+        abort(400, "No se recibió la cantidad.")
+
+    # Validar que se haya recibido el total
     if not "estado" in datos:
         abort(400, "No se recibió el estado del pago.")
 
@@ -227,6 +235,14 @@ def revisar(pag_pago_id_hasheado):
     if not "resultado_tiempo" in datos:
         abort(400, "No se recibió la fecha y hora del resultado de la operación bancaria.")
 
+    # Validar que se haya recibido la descripcion de la autoridad
+    if not "autoridad_descripcion" in datos:
+        abort(400, "No se recibió la descripcion de la autoridad.")
+
+    # Validar que se haya recibido el nombre del distrito
+    if not "distrito_nombre" in datos:
+        abort(400, "No se recibió el nombre del distrito.")
+
     # Si NO hay URL y el estado es SOLICITADO
     if url == "" and datos["estado"] == "SOLICITADO":
         return redirect(url_for("resultados.resultado_abortado"))
@@ -235,13 +251,16 @@ def revisar(pag_pago_id_hasheado):
     if datos["estado"] == "PAGADO":
         return render_template(
             "carros/comprobante.jinja2",
-            nombre=datos["cit_cliente_nombre"],
+            autoridad=datos["autoridad_descripcion"],
+            cantidad=datos["cantidad"],
+            comprobante_url=BASE_URL + url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado),
+            descripcion=datos["pag_tramite_servicio_descripcion"],
+            distrito=datos["distrito_nombre"],
             email=datos["email"],
             folio=datos["folio"],
-            descripcion=datos["pag_tramite_servicio_descripcion"],
-            total=datos["total"],
+            nombre=datos["cit_cliente_nombre"],
             resultado_tiempo=datos["resultado_tiempo"],
-            comprobante_url=BASE_URL + url_for("carros.revisar", pag_pago_id_hasheado=pag_pago_id_hasheado),
+            total=datos["total"],
         )
 
     # Si el estado es FALLIDO o CANCELADO, redireccionar a la página de pago fallido
